@@ -112,21 +112,25 @@ const CreateNew = (props) => {
     content.reset()
   }
 
+  const parseField = (field) => {
+    const { reset, ...others } = field
+    return others
+  }
   return (
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...content} />
+          <input {...parseField(content)} />
         </div>
         <div>
           author
-          <input {...author} />
+          <input {...parseField(author)} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <input {...parseField(info)} />
         </div>
         <button type='submit'>create</button>
         <button type='button' onClick={resetForm}>
