@@ -2,6 +2,11 @@ import { useState } from 'react'
 import { Routes, Route, Link, useMatch, useNavigate } from 'react-router-dom'
 import { useField } from './hooks'
 
+import { useDispatch, useSelector } from 'react-redux'
+
+import Notification from './components/Notification'
+import { displayNotification } from './reducers/notificationsReducer'
+
 const Menu = () => {
   const padding = {
     paddingRight: 5,
@@ -22,7 +27,7 @@ const Menu = () => {
 }
 
 const Anecdote = (props) => {
-  const { content, author, info, votes, id } = props.anecdote
+  const { content, author, info, votes } = props.anecdote
 
   return (
     <div>
@@ -62,7 +67,7 @@ const About = () => (
       more general than the brief tale itself, such as to characterize a person
       by delineating a specific quirk or trait, to communicate an abstract idea
       about a person, place, or thing through the concrete details of a short
-      narrative. An anecdote is "a story with a point."
+      narrative. An anecdote is &quota story with a point.&quot
     </em>
 
     <p>
@@ -71,14 +76,6 @@ const About = () => (
     </p>
   </div>
 )
-
-const Notification = ({ notification }) => {
-  if (notification) {
-    return <h4>{notification}</h4>
-  }
-
-  return null
-}
 
 const Footer = () => (
   <div>
@@ -113,6 +110,7 @@ const CreateNew = (props) => {
   }
 
   const parseField = (field) => {
+    // eslint-disable-next-line no-unused-vars
     const { reset, ...others } = field
     return others
   }
@@ -159,7 +157,8 @@ const App = () => {
     },
   ])
 
-  const [notification, setNotification] = useState('')
+  const notification = useSelector((state) => state.notification)
+  const dispatch = useDispatch()
 
   const navigate = useNavigate()
   const match = useMatch('/anecdotes/:id')
@@ -172,24 +171,21 @@ const App = () => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
     navigate('/')
-    setNotification(`a new anectode ${anecdote.content} added`)
-    setTimeout(() => {
-      setNotification('')
-    }, [3000])
+    dispatch(displayNotification(`a new anectode ${anecdote.content} added`))
   }
 
-  const anecdoteById = (id) => anecdotes.find((a) => a.id === id)
+  // const anecdoteById = (id) => anecdotes.find((a) => a.id === id)
 
-  const vote = (id) => {
-    const anecdote = anecdoteById(id)
+  // const vote = (id) => {
+  //   const anecdote = anecdoteById(id)
 
-    const voted = {
-      ...anecdote,
-      votes: anecdote.votes + 1,
-    }
+  //   const voted = {
+  //     ...anecdote,
+  //     votes: anecdote.votes + 1,
+  //   }
 
-    setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)))
-  }
+  //   setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)))
+  // }
 
   return (
     <div>
